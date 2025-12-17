@@ -1,0 +1,53 @@
+﻿@model IEnumerable<SozlukApp.Models.Word>
+@{
+    ViewData["Title"] = "Sözlük";
+}
+
+<div class="container py-4">
+    <div class="row mb-4 align-items-center">
+        <div class="col-md-8">
+             <h2 class="display-6 fw-bold text-primary">Kelime Listesi</h2>
+             <p class="text-muted">Topluluğumuz tarafından eklenen en güncel kelimeler.</p>
+        </div>
+        <div class="col-md-4 text-end">
+             <!-- Arama kutusu eklenebilir buraya ileride -->
+        </div>
+    </div>
+
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["Message"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        @foreach (var word in Model)
+        {
+            <div class="col">
+                <div class="card h-100 shadow-sm border-0 hover-effect">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                             <h4 class="card-title text-primary fw-bold mb-0">@word.Turkish</h4>
+                             <span class="badge bg-light text-dark border">En</span>
+                        </div>
+                        <h5 class="card-subtitle mb-3 text-muted">@word.English</h5>
+                        <p class="card-text text-secondary">@word.Description</p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .hover-effect {
+        transition: transform 0.2s, box-shadow 0.2s;
+        background-color: #fff;
+    }
+    .hover-effect:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+    }
+</style>

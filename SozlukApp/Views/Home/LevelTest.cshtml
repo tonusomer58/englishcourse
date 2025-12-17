@@ -1,0 +1,253 @@
+@{
+    ViewData["Title"] = "Seviye Belirleme";
+}
+
+<div class="container mt-5">
+    <div class="card shadow" style="background: rgba(255, 255, 255, 0.9);">
+        <div class="card-header bg-transparent border-0 pt-4 px-4">
+            <h2 class="text-primary fw-bold text-center">İngilizce Seviye Belirleme Testi</h2>
+            <p class="text-center text-muted">Lütfen bir test türü seçin ve soruları dürüstçe cevaplayın.</p>
+        </div>
+        <div class="card-body px-4 pb-5">
+            
+            <div id="selectionScreen" class="text-center py-4">
+                <div class="row justify-content-center gap-4">
+                    <div class="col-md-5">
+                        <div class="card h-100 p-4 hover-card" style="cursor: pointer;" onclick="startTest(15)">
+                            <div class="display-1 mb-3">⚡</div>
+                            <h3>Hızlı Test</h3>
+                            <p class="text-muted">15 Soru - Yaklaşık 5 dakika</p>
+                            <button class="btn btn-outline-primary w-100">Başla</button>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="card h-100 p-4 hover-card" style="cursor: pointer;" onclick="startTest(30)">
+                            <div class="display-1 mb-3">🧠</div>
+                            <h3>Detaylı Test</h3>
+                            <p class="text-muted">30 Soru - Yaklaşık 15 dakika</p>
+                            <button class="btn btn-outline-primary w-100">Başla</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="testArea" class="d-none">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 id="testTitle" class="mb-0">Test</h4>
+                    <span id="questionCount" class="badge bg-secondary">0 Soru</span>
+                </div>
+                
+                <form id="quizForm">
+                    <div id="questionsContainer"></div>
+                    
+                    <div class="d-grid mt-4">
+                         <button type="button" class="btn btn-primary btn-lg" onclick="calculateResult()">Sonucu Gör</button>
+                    </div>
+                </form>
+            </div>
+            
+            <div id="resultArea" class="mt-4 d-none">
+                <div class="alert alert-success text-center">
+                     <h2 class="alert-heading fw-bold" id="levelResult"></h2>
+                     <p class="mb-0 fs-5" id="levelDesc"></p>
+                </div>
+                <div class="text-center">
+                    <button class="btn btn-secondary" onclick="location.reload()">Tekrar Dene</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    // Geniş Kapsamlı Soru Havuzu (30 Soru)
+    // 0-14 arası: A1-A2 (Hızlı test için bunlar kullanılabilir veya karışık)
+    // Hızlı test: ilk 15 soru.
+    // Detaylı test: 30 soru.
+    
+    const allQuestions = [
+        // A1
+        { q: "I _____ a student.", options: ["is", "am", "are"], ans: 1 },
+        { q: "She _____ from Spain.", options: ["come", "comes", "coming"], ans: 1 },
+        { q: "_____ you like coffee?", options: ["Do", "Does", "Are"], ans: 0 },
+        { q: "There _____ two cars in the garage.", options: ["is", "are", "be"], ans: 1 },
+        { q: "He _____ reading a book now.", options: ["is", "am", "are"], ans: 0 },
+        
+        // A2
+        { q: "Yesterday, I _____ to the cinema.", options: ["go", "went", "gone"], ans: 1 },
+        { q: "Have you ever _____ to London?", options: ["be", "been", "was"], ans: 1 },
+        { q: "This is the _____ book I have ever read.", options: ["good", "better", "best"], ans: 2 },
+        { q: "I am interested _____ learning English.", options: ["on", "in", "at"], ans: 1 },
+        { q: "We _____ dinner when the phone rang.", options: ["were having", "had", "have"], ans: 0 },
+
+        // B1
+        { q: "If I _____ rich, I would buy a house.", options: ["am", "was", "were"], ans: 2 },
+        { q: "He told me that he _____ tired.", options: ["is", "was", "were"], ans: 1 },
+        { q: "I have lived here _____ 2010.", options: ["since", "for", "ago"], ans: 0 },
+        { q: "The car _____ by the mechanic yesterday.", options: ["repaired", "was repaired", "is repaired"], ans: 1 },
+        { q: "You _____ smoke here. It's forbidden.", options: ["mustn't", "don't have to", "shouldn't"], ans: 0 },
+
+        // B1+ / B2 
+        { q: "I look forward _____ from you.", options: ["to hear", "hearing", "to hearing"], ans: 2 },
+        { q: "I used to _____ up early when I was a student.", options: ["get", "getting", "got"], ans: 0 },
+        { q: "Despite _____ raining, we went out.", options: ["it", "of", "it's"], ans: 0 }, // Simplified for code, usually "Despite the rain" or "Despite it raining"
+        { q: "I'd rather you _____ now.", options: ["go", "went", "gone"], ans: 1 },
+        { q: "By next year, I _____ my degree.", options: ["will finish", "will have finished", "finish"], ans: 1 },
+
+        // B2 / C1
+        { q: "Scarcely had he entered the room _____ the phone rang.", options: ["when", "than", "after"], ans: 0 },
+        { q: "Use of computers _____ considerable benefit.", options: ["is of", "has", "are"], ans: 0 },
+        { q: "I wish I _____ harder when I was at school.", options: ["studied", "had studied", "would study"], ans: 1 },
+        { q: "Neither the players nor the coach _____ happy with the result.", options: ["was", "were", "are"], ans: 0 },
+        { q: "Had I known about the meeting, I _____ attended.", options: ["would have", "will have", "had"], ans: 0 },
+        
+        // C1 / Advanced
+        { q: "It is essential that he _____ immediately.", options: ["be told", "is told", "will be told"], ans: 0 }, // Subjunctive
+        { q: "Not only _____ late, but he also forgot his homework.", options: ["he was", "was he", "he is"], ans: 1 },
+        { q: "The government are looked _____ to improve the economy.", options: ["up", "at", "to"], ans: 2 },
+        { q: "_____ having a headache, she finished the report.", options: ["Although", "Despite", "In spite"], ans: 1 },
+        { q: "He is believed _____ working on a secret project.", options: ["to be", "that he is", "being"], ans: 0 }
+    ];
+
+    let currentQuestions = [];
+
+    function startTest(count) {
+        document.getElementById('selectionScreen').classList.add('d-none');
+        document.getElementById('testArea').classList.remove('d-none');
+        document.getElementById('testTitle').innerText = count === 15 ? "Hızlı Test" : "Detaylı Test";
+        document.getElementById('questionCount').innerText = count + " Soru";
+
+        // Select questions
+        if (count === 15) {
+            // Take first 15 (A1-B1 mix from our list)
+           currentQuestions = allQuestions.slice(0, 15);
+        } else {
+            currentQuestions = allQuestions;
+        }
+
+        renderQuestions();
+    }
+
+    function renderQuestions() {
+        const container = document.getElementById('questionsContainer');
+        container.innerHTML = "";
+
+        currentQuestions.forEach((item, index) => {
+            let html = `
+                <div class="mb-4 question-card p-3 border rounded bg-white" id="q_card_${index}">
+                    <label class="form-label fw-bold d-block mb-3">${index + 1}. ${item.q}</label>
+                    <div class="btn-group-vertical w-100" role="group">
+            `;
+            
+            item.options.forEach((opt, optIndex) => {
+                html += `
+                    <input type="radio" class="btn-check" name="q_${index}" id="q_${index}_opt_${optIndex}" value="${optIndex}" autocomplete="off">
+                    <label class="btn btn-outline-secondary text-start" for="q_${index}_opt_${optIndex}" id="label_${index}_${optIndex}">${opt}</label>
+                `;
+            });
+
+            html += `
+                    </div>
+                </div>
+            `;
+            container.innerHTML += html;
+        });
+    }
+
+    function calculateResult() {
+        // Disable all inputs
+        const inputs = document.querySelectorAll('input[type="radio"]');
+        inputs.forEach(i => i.disabled = true);
+        
+        // Hide submit button
+        document.querySelector('#testArea button').classList.add('d-none');
+
+        let score = 0;
+
+        currentQuestions.forEach((item, index) => {
+            const selected = document.querySelector(`input[name="q_${index}"]:checked`);
+            const correctAnswerIndex = item.ans;
+            
+            // Highlight correct answer always (Green)
+            const correctLabel = document.getElementById(`label_${index}_${correctAnswerIndex}`);
+            correctLabel.classList.remove('btn-outline-secondary');
+            correctLabel.classList.add('btn-success');
+            correctLabel.classList.add('text-white');
+
+            if (selected) {
+                const selectedVal = parseInt(selected.value);
+                if (selectedVal === correctAnswerIndex) {
+                    score++;
+                    // Add checkmark or visual indicator for correct card
+                   document.getElementById(`q_card_${index}`).classList.add('border-success');
+                   document.getElementById(`q_card_${index}`).style.borderWidth = "2px";
+                } else {
+                   // Highlight wrong answer (Red)
+                   const wrongLabel = document.getElementById(`label_${index}_${selectedVal}`);
+                   wrongLabel.classList.remove('btn-outline-secondary');
+                   wrongLabel.classList.add('btn-danger');
+                   wrongLabel.classList.add('text-white');
+                   
+                   document.getElementById(`q_card_${index}`).classList.add('border-danger');
+                   document.getElementById(`q_card_${index}`).style.borderWidth = "2px";
+                }
+            } else {
+                 // No answer selected
+                 document.getElementById(`q_card_${index}`).classList.add('border-warning');
+            }
+        });
+
+        // Show result
+        const total = currentQuestions.length;
+        const percentage = (score / total) * 100;
+        
+        let level = "";
+        let desc = "";
+
+        if (percentage < 20) { level = "A1 (Başlangıç)"; desc = "Yolun başındasınız! Kelime öğrenmeye ağırlık verin."; }
+        else if (percentage < 40) { level = "A2 (Temel)"; desc = "Temeliniz var, gramer eksiklerinizi tamamlayın."; }
+        else if (percentage < 60) { level = "B1 (Orta)"; desc = "Günlük konuşmaları rahatça hallediyorsunuz."; }
+        else if (percentage < 80) { level = "B2 (İyi)"; desc = "Akıcı konuşmaya çok yakınsınız!"; }
+        else { level = "C1 (İleri)"; desc = "Harika! İngilizceye hakimsiniz."; }
+
+        document.getElementById('levelResult').innerText = `Sonuç: ${score}/${total} - ${level}`;
+        document.getElementById('levelDesc').innerText = desc;
+        document.getElementById('resultArea').classList.remove('d-none');
+        
+        // Save result to DB
+        fetch('/Account/SaveTestResult', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                correctCount: score,
+                totalQuestions: total,
+                level: level
+            })
+        }).then(res => {
+            if (res.ok) {
+                console.log("Sonuç kaydedildi.");
+            } else {
+                console.error("Kayıt başarısız.");
+            }
+        }).catch(err => console.error(err));
+
+        // Scroll to result
+        document.getElementById('resultArea').scrollIntoView({ behavior: 'smooth' });
+    }
+</script>
+
+<style>
+    .hover-card {
+        transition: transform 0.2s, box-shadow 0.2s;
+        background: white;
+        border-radius: 1rem;
+        border: 1px solid rgba(0,0,0,.05);
+    }
+    .hover-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 1rem 3rem rgba(0,0,0,.1)!important;
+    }
+</style>

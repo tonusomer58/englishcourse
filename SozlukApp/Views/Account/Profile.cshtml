@@ -1,0 +1,78 @@
+@model IEnumerable<SozlukApp.Models.TestResult>
+@{
+    ViewData["Title"] = "Profilim";
+}
+
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-4 mb-4">
+             <div class="card shadow border-0 text-center p-4 h-100">
+                 <div class="mb-3">
+                     <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto" style="width: 100px; height: 100px; font-size: 3rem;">
+                         @User.Identity.Name.Substring(0,1).ToUpper()
+                     </div>
+                 </div>
+                 <h3 class="fw-bold">Merhaba, @User.Identity.Name</h3>
+                 <p class="text-muted">Üyelik Tipi: @User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value</p>
+                 <hr>
+                 <div class="text-start">
+                     <h5 class="fw-bold mb-3">İstatistikler</h5>
+                     <p>Toplam Test: <strong>@Model.Count()</strong></p>
+                     @{
+                         var avgScore = Model.Any() ? Math.Round(Model.Average(x => (double)x.CorrectCount / x.TotalQuestions * 100), 1) : 0;
+                     }
+                     <p>Ortalama Başarı: <span class="badge @(avgScore > 70 ? "bg-success" : avgScore > 40 ? "bg-warning" : "bg-danger")">@avgScore%</span></p>
+                 </div>
+             </div>
+        </div>
+        
+        <div class="col-md-8">
+            <div class="card shadow border-0 p-4">
+                <h3 class="fw-bold mb-4 text-primary">Geçmiş Sınav Sonuçları</h3>
+                
+                @if (!Model.Any())
+                {
+                    <div class="alert alert-info text-center">
+                        Henüz hiç test çözmediniz. <a asp-controller="Home" asp-action="LevelTest" class="alert-link">Hemen bir test çözün!</a>
+                    </div>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Tarih</th>
+                                    <th>Seviye</th>
+                                    <th>Doğru/Toplam</th>
+                                    <th>Başarı</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>@item.DateTaken.ToString("dd.MM.yyyy HH:mm")</td>
+                                        <td>
+                                            <span class="badge bg-info text-dark">@item.Level</span>
+                                        </td>
+                                        <td>@item.CorrectCount / @item.TotalQuestions</td>
+                                        <td>
+                                            @{
+                                                var successRate = Math.Round((double)item.CorrectCount / item.TotalQuestions * 100);
+                                                string colorClass = successRate >= 80 ? "success" : successRate >= 50 ? "warning" : "danger";
+                                            }
+                                            <div class="progress" style="height: 20px;">
+                                                <div class="progress-bar bg-@colorClass" role="progressbar" style="width: @successRate%;" aria-valuenow="@successRate" aria-valuemin="0" aria-valuemax="100">@successRate%</div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

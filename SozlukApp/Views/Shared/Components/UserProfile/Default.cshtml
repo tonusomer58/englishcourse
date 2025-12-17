@@ -1,0 +1,25 @@
+@model SozlukApp.ViewComponents.UserProfileViewModel
+
+<li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle text-primary fw-bold" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        Merhaba, @Model.Username
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end shadow border-0" aria-labelledby="navbarDropdown">
+        <li>
+            <div class="px-3 py-2 text-center">
+                <div class="fw-bold mb-1">Seviyeniz</div>
+                <span class="badge bg-success fs-6">@Model.LastLevel</span>
+            </div>
+        </li>
+        <li><hr class="dropdown-divider"></li>
+        <li>
+            <div class="px-3 py-1 small text-muted">
+                <div>Toplam Test: <strong>@Model.TotalTests</strong></div>
+                <div>Ort. Başarı: <strong>%@Model.AverageScore</strong></div>
+            </div>
+        </li>
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item" asp-controller="Account" asp-action="Profile">👤 Profilim</a></li>
+        <li><a class="dropdown-item text-danger" asp-controller="Account" asp-action="Logout">🚪 Çıkış Yap</a></li>
+    </ul>
+</li>

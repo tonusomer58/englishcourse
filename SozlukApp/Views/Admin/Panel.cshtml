@@ -1,0 +1,64 @@
+@model IEnumerable<SozlukApp.Models.Word>
+
+@{
+    ViewData["Title"] = "Admin Paneli";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Admin Yönetim Paneli</h2>
+        <a asp-controller="Word" asp-action="Add" class="btn btn-primary">
+            <i class="bi bi-plus-lg"></i> Yeni Kelime Ekle
+        </a>
+    </div>
+    
+    <div class="table-responsive">
+        <table class="table table-hover table-bordered shadow-sm">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Türkçe</th>
+                    <th>İngilizce</th>
+                    <th>Ekleyen</th>
+                    <th>Durum</th>
+                    <th>Açıklama</th>
+                    <th>İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr class="@(item.Status == SozlukApp.Models.WordStatus.Pending ? "table-warning" : 
+                                item.Status == SozlukApp.Models.WordStatus.Approved ? "table-success" : "table-danger")">
+                        <td>@item.Id</td>
+                        <td>@item.Turkish</td>
+                        <td>@item.English</td>
+                        <td>@(item.CreatedByUser?.Username ?? "Anonim")</td>
+                        <td>
+                            @if(item.Status == SozlukApp.Models.WordStatus.Pending) { <span class="badge bg-warning text-dark">Bekliyor</span> }
+                            else if(item.Status == SozlukApp.Models.WordStatus.Approved) { <span class="badge bg-success">Onaylı</span> }
+                            else { <span class="badge bg-danger">Reddedildi</span> }
+                        </td>
+                        <td>@item.Description</td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                @if(item.Status == SozlukApp.Models.WordStatus.Pending)
+                                {
+                                    <form asp-action="Approve" asp-route-id="@item.Id" method="post" style="display:inline;">
+                                        <button type="submit" class="btn btn-sm btn-success" title="Onayla">✔️</button>
+                                    </form>
+                                    <form asp-action="Reject" asp-route-id="@item.Id" method="post" style="display:inline;">
+                                        <button type="submit" class="btn btn-sm btn-warning" title="Reddet">❌</button>
+                                    </form>
+                                }
+                                <form asp-action="Delete" asp-route-id="@item.Id" method="post" style="display:inline;" onsubmit="return confirm('Silmek istediğine emin misin?');">
+                                    <button type="submit" class="btn btn-sm btn-danger" title="Sil">🗑️</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

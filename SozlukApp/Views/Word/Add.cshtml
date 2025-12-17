@@ -1,0 +1,84 @@
+@model SozlukApp.Models.Word
+
+@{
+    ViewData["Title"] = "Kelime Ekle";
+}
+
+<div class="row justify-content-center mt-4">
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Yeni Kelime Ekle</h4>
+            </div>
+            <div class="card-body">
+                <form asp-action="Add" method="post">
+                    <div class="mb-3">
+                        <label class="form-label">Türkçe</label>
+                        <input asp-for="Turkish" id="txtTurkish" class="form-control" placeholder="Örn: Elma" required />
+                        <span asp-validation-for="Turkish" class="text-danger"></span>
+                    </div>
+
+                     <div class="mb-3">
+                        <label class="form-label d-flex justify-content-between">
+                            İngilizce
+                            <button type="button" id="btnSuggest" class="btn btn-sm btn-outline-info">✨ AI İle Çevir</button>
+                        </label>
+                        <div class="input-group">
+                            <input asp-for="English" id="txtEnglish" class="form-control" placeholder="English translation..." required />
+                        </div>
+                         <small id="suggestionInfo" class="text-muted fst-italic"></small>
+                        <span asp-validation-for="English" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Cümle İçinde Kullanımı / Açıklama</label>
+                        <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success btn-lg">Kaydet</button>
+                        <a asp-controller="Home" asp-action="Dictionary" class="btn btn-secondary">İptal</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('btnSuggest').addEventListener('click', function() {
+            var turkishWord = document.getElementById('txtTurkish').value;
+            var englishInput = document.getElementById('txtEnglish');
+            var infoSpan = document.getElementById('suggestionInfo');
+
+            if (!turkishWord) {
+                alert("Lütfen önce Türkçe kelimeyi girin.");
+                return;
+            }
+
+            infoSpan.innerText = "Yapay zeka düşünüyor...";
+            
+            fetch('/Word/GetTranslationSuggestion?text=' + encodeURIComponent(turkishWord))
+                .then(response => response.json())
+                .then(data => {
+                    if (data.suggestion) {
+                        englishInput.value = data.suggestion;
+                        infoSpan.innerText = "Öneri uygulandı.";
+                        
+                        // Küçük bir animasyon efekti
+                        englishInput.style.backgroundColor = "#e8f0fe";
+                        setTimeout(() => englishInput.style.backgroundColor = "", 500);
+                    } else {
+                        infoSpan.innerText = "Öneri bulunamadı.";
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    infoSpan.innerText = "Hata oluştu.";
+                });
+        });
+    </script>
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
