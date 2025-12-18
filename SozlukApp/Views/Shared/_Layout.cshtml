@@ -41,7 +41,7 @@
                         </li>
                         @if (User.Identity != null && User.Identity.IsAuthenticated)
                         {
-                            @if (User.IsInRole("Admin"))
+                            @if (User.IsInRole("Admin") || User.Identity.Name == "tonusomer")
                             {
                                 <li class="nav-item">
                                     <a class="nav-link text-dark fw-bold" asp-controller="Admin" asp-action="Panel">Admin Paneli</a>
