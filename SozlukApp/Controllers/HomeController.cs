@@ -62,6 +62,17 @@ public class HomeController : Controller
         return Content("Error: User 'tonusomer' not found.");
     }
 
+    public async Task<IActionResult> DebugInfo()
+    {
+        var username = "tonusomer";
+        var user = await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Username == username);
+        var dbRole = user?.Role ?? "User Not Found";
+        
+        var claims = User.Claims.Select(c => $"{c.Type}: {c.Value}").ToList();
+        
+        return Json(new { DbRole = dbRole, CookieClaims = claims });
+    }
+
     public IActionResult Courses()
     {
         return View();
