@@ -50,6 +50,18 @@ public class HomeController : Controller
         return Content("Kullanıcı bulunamadı.");
     }
 
+    public async Task<IActionResult> FixAdmin()
+    {
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == "tonusomer");
+        if (user != null)
+        {
+            user.Role = "Admin";
+            await _context.SaveChangesAsync();
+            return Content("Success: 'tonusomer' role set to Admin. Please Logout and Login again.");
+        }
+        return Content("Error: User 'tonusomer' not found.");
+    }
+
     public IActionResult Courses()
     {
         return View();
