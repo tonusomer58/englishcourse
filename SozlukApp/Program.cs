@@ -39,4 +39,12 @@ app.MapControllerRoute(
     .WithStaticAssets();
 
 
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<SozlukApp.Data.SozlukContext>();
+    SozlukApp.Data.DbInitializer.Initialize(context);
+}
+
 app.Run();
