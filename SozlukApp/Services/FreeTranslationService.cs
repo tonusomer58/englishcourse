@@ -48,6 +48,8 @@ namespace SozlukApp.Services
                 var response = await _httpClient.GetStringAsync($"https://api.dictionaryapi.dev/api/v2/entries/en/{Uri.EscapeDataString(word)}");
                 using var doc = JsonDocument.Parse(response);
                 
+                string bestExample = null;
+
                 // Deep search for example sentence
                 foreach (var element in doc.RootElement.EnumerateArray())
                 {
@@ -59,14 +61,28 @@ namespace SozlukApp.Services
                             {
                                 foreach (var def in definitions.EnumerateArray())
                                 {
-                                    if (def.TryGetProperty("example", out var example))
+                                    if (def.TryGetProperty("example", out var exampleJson))
                                     {
-                                        return example.GetString();
+                                        string currentExample = exampleJson.GetString();
+                                        // Filter out short fragments like "to table fines"
+                                        if (!string.IsNullOrWhiteSpace(currentExample) && currentExample.Length > 15) 
+                                        {
+                                            // Pick the longest example we find, usually better quality
+                                            if (bestExample == null || currentExample.Length > bestExample.Length)
+                                            {
+                                                bestExample = currentExample;
+                                            }
+                                        }
                                     }
                                 }
                             }
                         }
                     }
+                }
+
+                if (bestExample != null)
+                {
+                    return bestExample;
                 }
             }
             catch
@@ -74,7 +90,7 @@ namespace SozlukApp.Services
                 // Ignore errors (API not found etc) and fall through to fallback
             }
 
-            // Fallback sentence if no example found in API
+            // Fallback sentence if no suitable example found in API
             return $"This is a sample sentence using the word '{word}'.";
         }
     }
