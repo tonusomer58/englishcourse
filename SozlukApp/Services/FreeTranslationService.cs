@@ -90,7 +90,43 @@ namespace SozlukApp.Services
                 // Ignore errors (API not found etc) and fall through to fallback
             }
 
-            // Fallback sentence if no suitable example found in API
+            // Fallback 2: Wikipedia Search (Huge archive of sentences)
+            try
+            {
+                 // Search for the word in English Wikipedia
+                var wikiUrl = $"https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch={Uri.EscapeDataString(word)}&utf8=&format=json";
+                var wikiResponse = await _httpClient.GetStringAsync(wikiUrl);
+                using var wikiDoc = JsonDocument.Parse(wikiResponse);
+                
+                var query = wikiDoc.RootElement.GetProperty("query");
+                var searchResults = query.GetProperty("search");
+                
+                foreach (var result in searchResults.EnumerateArray())
+                {
+                    // Snippet contains HTML like <span class="searchmatch">word</span>
+                    if (result.TryGetProperty("snippet", out var snippetJson))
+                    {
+                        string rawSnippet = snippetJson.GetString();
+                        if (!string.IsNullOrEmpty(rawSnippet)) 
+                        {
+                             // Remove simple HTML tags
+                            string cleanSnippet = System.Text.RegularExpressions.Regex.Replace(rawSnippet, "<.*?>", "");
+                            
+                            // Ensure it looks like a sentence and contains the word
+                            if (!string.IsNullOrWhiteSpace(cleanSnippet) && cleanSnippet.Length > 20)
+                            {
+                                return cleanSnippet + "... (Source: Wikipedia)";
+                            }
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                // Ignore Wiki errors
+            }
+
+            // Fallback 3: Generic Template
             return $"This is a sample sentence using the word '{word}'.";
         }
     }
