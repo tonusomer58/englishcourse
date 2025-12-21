@@ -7,13 +7,16 @@ using System.Security.Claims;
 namespace SozlukApp.Controllers
 {
     [Authorize]
+
     public class WordController : Controller
     {
         private readonly SozlukContext _context;
+        private readonly SozlukApp.Services.IAIService _aiService;
 
-        public WordController(SozlukContext context)
+        public WordController(SozlukContext context, SozlukApp.Services.IAIService aiService)
         {
             _context = context;
+            _aiService = aiService;
         }
 
         [Authorize(Roles = "Admin")]
@@ -45,17 +48,21 @@ namespace SozlukApp.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetTranslationSuggestion(string text)
+        public async Task<IActionResult> GetTranslationSuggestion(string text)
         {
-             // AI Disabled due to build error rollback
-             return Json(new { suggestion = "" });
+            if (string.IsNullOrWhiteSpace(text)) return Json(new { suggestion = "" });
+
+            var suggestion = await _aiService.TranslateAsync(text);
+            return Json(new { suggestion });
         }
 
         [HttpGet]
-        public IActionResult GetExampleSentence(string word)
+        public async Task<IActionResult> GetExampleSentence(string word)
         {
-             // AI Disabled due to build error rollback
-             return Json(new { sentence = "" });
+            if (string.IsNullOrWhiteSpace(word)) return Json(new { sentence = "" });
+
+            var sentence = await _aiService.GenerateExampleSentenceAsync(word);
+            return Json(new { sentence });
         }
     }
 }

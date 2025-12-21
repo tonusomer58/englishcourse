@@ -7,6 +7,8 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<SozlukApp.Data.SozlukContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddHttpClient<SozlukApp.Services.IAIService, SozlukApp.Services.FreeTranslationService>();
+
 builder.Services.AddAuthentication(Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
