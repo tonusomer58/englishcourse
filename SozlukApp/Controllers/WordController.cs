@@ -47,25 +47,15 @@ namespace SozlukApp.Controllers
         [HttpGet]
         public IActionResult GetTranslationSuggestion(string text)
         {
-            // Simüle edilmiş AI çevirisi
-            // Gerçek bir API yerine dummy bir logic
-            if (string.IsNullOrWhiteSpace(text)) return Json(new { suggestion = "" });
+             // AI Disabled due to build error rollback
+             return Json(new { suggestion = "" });
+        }
 
-            string suggestion = text.ToLower() switch
-            {
-                "elma" => "Apple",
-                "armut" => "Pear",
-                "merhaba" => "Hello",
-                "dünya" => "World",
-                "kedi" => "Cat",
-                "köpek" => "Dog",
-                "kitap" => "Book",
-                "kalem" => "Pencil",
-                "okul" => "School",
-                _ => "[AI Çevirisi]" // Bilinmeyen kelimeler için placeholder
-            };
-
-            return Json(new { suggestion });
+        [HttpGet]
+        public IActionResult GetExampleSentence(string word)
+        {
+             // AI Disabled due to build error rollback
+             return Json(new { sentence = "" });
         }
     }
 }

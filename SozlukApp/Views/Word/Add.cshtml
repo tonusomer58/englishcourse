@@ -31,8 +31,12 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Cümle İçinde Kullanımı / Açıklama</label>
-                        <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                        <label class="form-label d-flex justify-content-between">
+                            Cümle İçinde Kullanımı / Açıklama
+                             <button type="button" id="btnGenerateExample" class="btn btn-sm btn-outline-warning">💡 Örnek Cümle Üret</button>
+                        </label>
+                        <textarea asp-for="Description" id="txtDescription" class="form-control" rows="3"></textarea>
+                        <small id="exampleInfo" class="text-muted fst-italic"></small>
                         <span asp-validation-for="Description" class="text-danger"></span>
                     </div>
 
@@ -72,6 +76,38 @@
                         setTimeout(() => englishInput.style.backgroundColor = "", 500);
                     } else {
                         infoSpan.innerText = "Öneri bulunamadı.";
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    infoSpan.innerText = "Hata oluştu.";
+                });
+        });
+
+        document.getElementById('btnGenerateExample').addEventListener('click', function() {
+            var englishWord = document.getElementById('txtEnglish').value;
+            var descriptionInput = document.getElementById('txtDescription');
+            var infoSpan = document.getElementById('exampleInfo');
+
+            if (!englishWord) {
+                alert("Lütfen önce İngilizce kelimeyi girin (veya çeviriyi yapın).");
+                return;
+            }
+
+            infoSpan.innerText = "Örnek cümle ve açıklama üretiliyor...";
+            
+            fetch('/Word/GetExampleSentence?word=' + encodeURIComponent(englishWord))
+                .then(response => response.json())
+                .then(data => {
+                    if (data.sentence) {
+                        descriptionInput.value = data.sentence;
+                        infoSpan.innerText = "Örnek üretildi.";
+                        
+                        // Animasyon
+                        descriptionInput.style.backgroundColor = "#fff3cd";
+                        setTimeout(() => descriptionInput.style.backgroundColor = "", 500);
+                    } else {
+                        infoSpan.innerText = "Örnek üretilemedi.";
                     }
                 })
                 .catch(err => {
