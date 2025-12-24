@@ -10,6 +10,12 @@
              <p class="text-muted">Topluluğumuz tarafından eklenen en güncel kelimeler.</p>
         </div>
         <div class="col-md-4 text-end">
+             @if (User.Identity != null && User.Identity.IsAuthenticated)
+             {
+                 <a asp-controller="Word" asp-action="Add" class="btn btn-primary shadow-sm">
+                     <i class="bi bi-plus-circle"></i> @(User.IsInRole("Admin") ? "Kelime Ekle" : "Kelime Öner")
+                 </a>
+             }
              <!-- Arama kutusu eklenebilir buraya ileride -->
         </div>
     </div>

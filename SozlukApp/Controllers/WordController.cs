@@ -19,7 +19,7 @@ namespace SozlukApp.Controllers
             _aiService = aiService;
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize] // Allow any authenticated user
         [HttpGet]
         public IActionResult Add()
         {
@@ -37,12 +37,36 @@ namespace SozlukApp.Controllers
                     model.CreatedByUserId = int.Parse(userId);
                 }
 
-                model.Status = WordStatus.Pending;
+                // If Admin adds it, can be auto-approved? 
+                // For now, adhere to plan: "User -> Pending". 
+                // If Admin wants to approve, they can do it in Panel. 
+                // But typically Admin adds = Approved.
+                // Let's check role.
+                if (User.IsInRole("Admin"))
+                {
+                     model.Status = WordStatus.Approved;
+                     TempData["Message"] = "Kelime doğrulandı ve eklendi.";
+                }
+                else
+                {
+                     model.Status = WordStatus.Pending;
+                     TempData["Message"] = "Kelime öneriniz alındı, onay için yöneticiye gönderildi.";
+                }
+
                 _context.Words.Add(model);
                 await _context.SaveChangesAsync();
                 
-                TempData["Message"] = "Kelime başarıyla eklendi.";
-                return RedirectToAction("Panel", "Admin");
+                if (User.IsInRole("Admin"))
+                {
+                    return RedirectToAction("Panel", "Admin");
+                }
+                else
+                {
+                    // User stays on page or goes to Dictionary? 
+                    // Stays on page to add more is often better, or redirect to Home/Dictionary?
+                    // Let's redirect to Dictionary with the message visible.
+                    return RedirectToAction("Dictionary", "Home");
+                }
             }
             return View(model);
         }

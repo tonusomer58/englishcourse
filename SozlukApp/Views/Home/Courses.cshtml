@@ -167,7 +167,7 @@
                         <li>❌ Canlı Konuşma Pratiği</li>
                         <li>❌ Birebir Mentorluk</li>
                     </ul>
-                    <button type="button" class="w-100 btn btn-lg btn-outline-primary mt-auto">Hemen Başla</button>
+                    <button type="button" class="w-100 btn btn-lg btn-outline-primary mt-auto" onclick="confirmOrder('Başlangıç', '499 TL')">Hemen Başla</button>
                 </div>
             </div>
         </div>
@@ -188,7 +188,7 @@
                         <li>✅ Sertifika İmkanı</li>
                         <li>❌ 7/24 Destek</li>
                     </ul>
-                    <button type="button" class="w-100 btn btn-lg btn-primary mt-auto">En Popüler</button>
+                    <button type="button" class="w-100 btn btn-lg btn-primary mt-auto" onclick="confirmOrder('Profesyonel', '899 TL')">En Popüler</button>
                 </div>
             </div>
         </div>
@@ -209,12 +209,30 @@
                         <li>✅ Yurt Dışı Danışmanlığı</li>
                         <li>✅ Ömür Boyu Erişim</li>
                     </ul>
-                    <button type="button" class="w-100 btn btn-lg btn-primary mt-auto">İletişime Geç</button>
+                    <button type="button" class="w-100 btn btn-lg btn-primary mt-auto" onclick="confirmOrder('VIP', '1999 TL')">İletişime Geç</button>
                 </div>
             </div>
         </div>
     </div>
+    </div>
+
+    <!-- Order Confirmation Modal (Optional, using native confirm for simplicity as requested "siparişi onaylıyor musunuz") -->
 </div>
+
+<script>
+    function confirmOrder(packageName, price) {
+        if (confirm(packageName + ' paketini (' + price + ') satın almak ve siparişi onaylamak istiyor musunuz?')) {
+            // User confirmed
+            // Fake WP number: 905551234567
+            var phoneNumber = "905551234567";
+            var message = "Merhaba, " + packageName + " paketini (" + price + ") satın almak istiyorum. Siparişimi onaylar mısınız?";
+            var url = "https://wa.me/" + phoneNumber + "?text=" + encodeURIComponent(message);
+            
+            // Redirect
+            window.open(url, '_blank');
+        }
+    }
+</script>
 
 <style>
     .hover-card {

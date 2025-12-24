@@ -1,14 +1,14 @@
 @model SozlukApp.Models.Word
 
 @{
-    ViewData["Title"] = "Kelime Ekle";
+    ViewData["Title"] = User.IsInRole("Admin") ? "Kelime Ekle" : "Kelime Öner";
 }
 
 <div class="row justify-content-center mt-4">
     <div class="col-md-6">
         <div class="card shadow">
             <div class="card-header bg-primary text-white">
-                <h4 class="mb-0">Yeni Kelime Ekle</h4>
+                <h4 class="mb-0">@ViewData["Title"]</h4>
             </div>
             <div class="card-body">
                 <form asp-action="Add" method="post">
