@@ -1,90 +1,107 @@
-# EnglishCourse Projesi
+# 🎓 EnglishCourse - Web Tabanlı Dil Eğitim Platformu
 
-## 1. PROJE ÖZETİ
-**EnglishCourse**, kullanıcıların İngilizce kelime dağarcığını geliştirmelerine, çeviri yapmalarına ve seviye tespit sınavları ile bilgilerini ölçmelerine olanak tanıyan kapsamlı bir web tabanlı eğitim platformudur.  
-Proje, modern web standartlarına uygun, hızlı ve kullanıcı dostu bir deneyim sunmayı amaçlamaktadır.
+![.NET](https://img.shields.io/badge/.NET%209-512BD4?style=for-the-badge&logo=dotnet&logoColor=white) ![Ubuntu](https://img.shields.io/badge/Ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white) ![Nginx](https://img.shields.io/badge/Nginx-009639?style=for-the-badge&logo=nginx&logoColor=white) ![Google Cloud](https://img.shields.io/badge/Google_Cloud-4285F4?style=for-the-badge&logo=google-cloud&logoColor=white)
 
 ---
 
-## 2. KULLANILAN TEKNOLOJİLER
-Bu projenin geliştirilmesinde aşağıdaki teknolojiler ve araçlar kullanılmıştır:
+## 🚀 1. Proje Özeti
+
+**EnglishCourse**, kullanıcıların İngilizce kelime dağarcığını geliştirmelerine, çeviri yapmalarına ve seviye tespit sınavları ile bilgilerini ölçmelerine olanak tanıyan kapsamlı bir web platformudur.
+
+Bu proje, sadece bir web sitesi değil, **Google Cloud Platform (GCP)** üzerinde, **Linux (Ubuntu)** sunucu altyapısında ve **Nginx** teknolojisi kullanılarak canlıya alınmış, ölçeklenebilir modern bir mimaridir.
+
+🌐 **Canlı Demo:** [http://webprogramlama.com.tr](http://webprogramlama.com.tr)
+
+---
+
+## 🛠️ 2. Kullanılan Teknolojiler ve Altyapı
+
+### 💻 Backend & Frontend
 
 - **Framework:** .NET 9 (ASP.NET Core MVC)
-- **Programlama Dili:** C#
+- **Dil:** C#
 - **Veritabanı:** Microsoft SQL Server (MSSQL)
-- **ORM:** Entity Framework Core
-- **Frontend:** HTML5, CSS3, JavaScript
-- **API Entegrasyonu:** MyMemory API (Çeviri servisi)
-- **Hosting:** SmarterASP.NET
+- **ORM:** Entity Framework Core (Code-First Yaklaşımı)
+- **Arayüz:** HTML5, CSS3, JavaScript, Bootstrap 5
+- **API Entegrasyonu:** MyMemory API (Anlık Çeviri Servisi)
+
+### ☁️ Sunucu & DevOps (Yayınlama Ortamı)
+
+- **Bulut Sağlayıcı:** Google Cloud Platform (Compute Engine)
+- **İşletim Sistemi:** Ubuntu Linux Server 22.04 LTS
+- **Web Sunucusu:** Nginx (Reverse Proxy Yapılandırması)
+- **Servis Yönetimi:** Systemd (Linux Daemon Service)
+- **Alan Adı (DNS):** METUnic
 
 ---
 
-## 3. PROJE MİMARİSİ VE TASARIM (MVC)
-Proje, uygulamanın veri (**Model**), arayüz (**View**) ve iş mantığı (**Controller**) katmanlarını birbirinden ayıran **MVC (Model-View-Controller)** tasarım deseni kullanılarak geliştirilmiştir.
+## 🏗️ 3. Proje Mimarisi (MVC & Server)
 
-### Katmanlar
-- **Models:**  
-  Veritabanı tablolarını temsil eden sınıflar bulunur.  
-  Örnek: `User`, `Word`, `Courses`
+Proje, **MVC (Model-View-Controller)** tasarım deseni ile geliştirilmiştir. Ancak projenin en güçlü yanı sunucu mimarisidir:
 
-- **Views:**  
-  Kullanıcı arayüzünü oluşturan `.cshtml` dosyalarıdır.  
-  Razor sözdizimi kullanılarak dinamik içerik üretilir.
-
-- **Controllers:**  
-  Gelen istekleri karşılayan, iş mantığını çalıştıran ve uygun View'ı döndüren sınıflardır.  
-  Örnek: `HomeController`, `AdminController`
-
-### İlişki Örneği
-Kullanıcı bir kurs sayfasına girdiğinde, `CoursesController` veritabanından (**Model**) veriyi çeker ve bu veriyi `Index.cshtml` (**View**) sayfasına göndererek ekranda gösterir.
+1.  **İstek (Request):** Kullanıcı `webprogramlama.com.tr` adresine girer.
+2.  **Firewall:** Google Cloud Güvenlik Duvarı isteği karşılar (Port 80).
+3.  **Reverse Proxy (Nginx):** Gelen isteği Linux sunucu içinde çalışan `.NET Kestrel` sunucusuna (`localhost:5000`) yönlendirir.
+4.  **Cevap (Response):** İşlenen veri aynı güvenli yoldan kullanıcıya döner.
 
 ---
 
-## 4. TEMEL ÖZELLİKLER
-- **Kullanıcı İşlemleri:**  
-  Kayıt olma, giriş yapma ve yetkilendirme (Admin / User rolleri)
+## ✨ 4. Temel Özellikler
 
-- **Sözlük ve Çeviri:**  
-  Veritabanından kelime arama ve MyMemory API ile anlık çeviri
+### 👤 Kullanıcı İşlemleri
 
-- **Eğitim Modülleri:**  
-  Farklı seviyelere yönelik kurs içerikleri  
-  (Başlangıç, Orta, İleri)
+- ✅ **Kayıt & Giriş:** Güvenli kimlik doğrulama sistemi.
+- ✅ **Yetkilendirme:** Admin ve User rolleri ile sayfa erişim kısıtlamaları.
 
-- **Yönetici Paneli:**  
-  Admin yetkisine sahip kullanıcılar:
-  - Yeni kurs ekleyebilir
-  - Kelime ekleyebilir
-  - Güncelleme ve silme işlemleri yapabilir
+### 📚 Sözlük ve Çeviri
 
----
+- ✅ **Kişisel Sözlük:** Kullanıcılar kendi kelimelerini ekleyebilir.
+- ✅ **Anlık Çeviri:** API desteği ile hızlı İngilizce-Türkçe çeviri.
 
-## 5. VERİTABANI TASARIMI
-Proje veritabanı **Code-First** yaklaşımı ile tasarlanmıştır.  
-Veritabanı bağlantısı `appsettings.json` dosyası üzerinden yapılandırılmıştır.
+### 🎓 Eğitim ve Sınav
 
-### Temel Tablolar
-- **Courses:** Kurs başlığı, içeriği ve resim yolu
-- **Topics:** Kurslara bağlı alt konular
-- **Words:** Sözlükteki kelimeler ve anlamları
+- ✅ **Test Modülleri:** Başlangıç, Orta ve İleri seviye testler.
+- ✅ **Puanlama:** Sınav sonucuna göre anlık seviye belirleme.
+
+### 🛡️ Yönetici (Admin) Paneli
+
+- ✅ **İçerik Yönetimi:** Yeni kurs, konu ve kelime ekleme/silme.
+- ✅ **Kullanıcı Denetimi:** Kullanıcıların eklediği içerikleri onaylama veya reddetme.
 
 ---
 
-## 6. CRUD İŞLEMLERİ VE ENDPOINT MANTIĞI
-Projede veriler üzerinde tam kontrol sağlamak amacıyla **Güncelleme (Update)** ve **Silme (Delete)** işlemleri MVC mimarisine uygun endpoint yapısı ile gerçekleştirilmiştir.
+## 🗄️ 5. Veritabanı Tasarımı (Code-First)
 
-### 6.1 Güncelleme (Update) Mantığı
-- **GET İsteği:**  
-  `Edit(int id)` metodu çalışır.  
-  Güncellenecek veri ID’ye göre bulunur ve form doldurularak kullanıcıya gösterilir.
+Veritabanı bağlantısı `appsettings.json` üzerinden güvenli bir şekilde yönetilmektedir.
 
-- **POST İsteği:**  
-  Kullanıcı formu gönderdiğinde `[HttpPost] Edit` metodu çalışır.  
-  `_context.Update()` komutu ile değişiklikler veritabanına kaydedilir.
+| Tablo Adı       | Açıklama                                               |
+| :-------------- | :----------------------------------------------------- |
+| **Users**       | Kullanıcı adı, şifre ve rol bilgileri.                 |
+| **Words**       | İngilizce kelimeler, Türkçe karşılıkları ve durumları. |
+| **Courses**     | Eğitim kursları ve içerik detayları.                   |
+| **TestResults** | Kullanıcıların sınav skorları ve tarihleri.            |
 
-### 6.2 Silme (Delete) Mantığı
-- **GET İsteği:**  
-  `Delete(int id)` metodu ile kullanıcıya silme işlemi için onay sayfası gösterilir.
+---
 
-- **POST İsteği:**  
-  Onay verildiğinde `[HttpPost, ActionName("Delete")]` metodu tetiklenir ve  
+## 🔄 6. CRUD Mantığı ve Endpoint Yapısı
+
+Projede veri bütünlüğü için **MVC Endpoint** yapısı kullanılmıştır:
+
+- **Güncelleme (Update):** `[HttpGet]` ile mevcut veri forma doldurulur, `[HttpPost]` ile değişiklikler veritabanına `_context.Update()` komutuyla işlenir.
+- **Silme (Delete):** Kullanıcıya önce bir onay ekranı gösterilir, onay alındığında `ActionName("Delete")` metodu çalışır ve veri silinir.
+
+---
+
+## 🐧 7. Linux Kurulum ve Yayınlama Adımları
+
+Proje yerel bilgisayardan (Localhost) bulut sunucuya (Production) şu adımlarla taşınmıştır:
+
+1.  **Publish:** Visual Studio'da `linux-x64` için derleme alındı.
+2.  **SSH Bağlantısı:** Terminal üzerinden Google Cloud sunucusuna bağlanıldı.
+3.  **Deploy:** Dosyalar `/var/www/sozluk` dizinine yüklendi.
+4.  **Servis (Daemon):** Uygulamanın sunucu yeniden başlasa bile çalışması için `sozluk.service` yazıldı.
+5.  **Nginx Config:** Domain yönlendirmesi için `/etc/nginx/sites-available/default` dosyası yapılandırıldı.
+
+---
+
+👨‍💻 **Geliştirici:** Ömer Tonus
