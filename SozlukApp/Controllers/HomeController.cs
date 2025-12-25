@@ -21,6 +21,7 @@ public class HomeController : Controller
         return View();
     }
 
+    [Route("Dictionary")]
     public async Task<IActionResult> Dictionary(string searchString)
     {
         var wordsQuery = _context.Words
@@ -39,6 +40,7 @@ public class HomeController : Controller
         return View(words);
     }
 
+    [Route("LevelTest")]
     public IActionResult LevelTest()
     {
         return View();
@@ -82,21 +84,25 @@ public class HomeController : Controller
         return Json(new { DbRole = dbRole, CookieClaims = claims });
     }
 
+    [Route("Courses")]
     public IActionResult Courses()
     {
         return View();
     }
 
+    [Route("About")]
     public IActionResult About()
     {
         return View();
     }
 
+    [Route("Contact")]
     public IActionResult Contact()
     {
         return View();
     }
 
+    [Route("Privacy")]
     public IActionResult Privacy()
     {
         return View();

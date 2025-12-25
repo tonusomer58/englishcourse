@@ -1,3 +1,6 @@
+// Remove-Item -Recurse -Force yayin
+// dotnet publish -c Release -o yayin
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.HttpOverrides;
 var builder = WebApplication.CreateBuilder(args);
