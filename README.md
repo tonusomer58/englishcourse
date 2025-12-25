@@ -12,7 +12,9 @@ Bu proje, sadece bir web sitesi değil, **Google Cloud Platform (GCP)** üzerind
 
 🌐 **Canlı Demo:** [http://webprogramlama.com.tr](http://webprogramlama.com.tr)
 
----
+> **⚠️ Önemli Not:** Alan adı (Domain) yönlendirmesi DNS yayılma sürecinde olduğu için, erişimde aksaklık yaşanırsa aşağıdaki doğrudan sunucu IP adresi üzerinden projeyi inceleyebilirsiniz:
+>
+> 🔗 **Doğrudan Sunucu Erişimi:** [http://34.170.180.78](http://34.170.180.78)
 
 ## 🛠️ 2. Kullanılan Teknolojiler ve Altyapı
 
