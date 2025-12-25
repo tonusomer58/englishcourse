@@ -48,7 +48,7 @@ namespace SozlukApp.Services
                 var response = await _httpClient.GetStringAsync($"https://api.dictionaryapi.dev/api/v2/entries/en/{Uri.EscapeDataString(word)}");
                 using var doc = JsonDocument.Parse(response);
                 
-                string bestExample = null;
+                string? bestExample = null;
 
                 // Deep search for example sentence
                 foreach (var element in doc.RootElement.EnumerateArray())
@@ -63,7 +63,7 @@ namespace SozlukApp.Services
                                 {
                                     if (def.TryGetProperty("example", out var exampleJson))
                                     {
-                                        string currentExample = exampleJson.GetString();
+                                        string? currentExample = exampleJson.GetString();
                                         // Filter out short fragments like "to table fines"
                                         if (!string.IsNullOrWhiteSpace(currentExample) && currentExample.Length > 15) 
                                         {
@@ -106,7 +106,7 @@ namespace SozlukApp.Services
                     // Snippet contains HTML like <span class="searchmatch">word</span>
                     if (result.TryGetProperty("snippet", out var snippetJson))
                     {
-                        string rawSnippet = snippetJson.GetString();
+                        string? rawSnippet = snippetJson.GetString();
                         if (!string.IsNullOrEmpty(rawSnippet)) 
                         {
                              // Remove simple HTML tags

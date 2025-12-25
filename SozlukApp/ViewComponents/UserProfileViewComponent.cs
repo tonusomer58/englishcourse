@@ -43,9 +43,9 @@ namespace SozlukApp.ViewComponents
 
     public class UserProfileViewModel
     {
-        public string Username { get; set; }
+        public string? Username { get; set; }
         public int TotalTests { get; set; }
-        public string LastLevel { get; set; }
+        public string? LastLevel { get; set; }
         public double AverageScore { get; set; }
     }
 }
