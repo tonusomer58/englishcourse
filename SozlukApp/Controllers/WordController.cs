@@ -31,6 +31,16 @@ namespace SozlukApp.Controllers
         {
             if (ModelState.IsValid)
             {
+                // Capitalize first letters as requested
+                if (!string.IsNullOrEmpty(model.Turkish))
+                    model.Turkish = char.ToUpper(model.Turkish[0], new System.Globalization.CultureInfo("tr-TR")) + model.Turkish.Substring(1);
+                
+                if (!string.IsNullOrEmpty(model.English))
+                    model.English = char.ToUpper(model.English[0], System.Globalization.CultureInfo.InvariantCulture) + model.English.Substring(1);
+
+                if (!string.IsNullOrEmpty(model.Description))
+                    model.Description = char.ToUpper(model.Description[0], System.Globalization.CultureInfo.InvariantCulture) + model.Description.Substring(1);
+
                 var userId = User.FindFirstValue("UserId");
                 if (userId != null)
                 {
