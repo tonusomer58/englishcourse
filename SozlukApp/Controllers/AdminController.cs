@@ -18,15 +18,30 @@ namespace SozlukApp.Controllers
 
         public async Task<IActionResult> Panel()
         {
-            // Bekleyen kelimeleri listele, oluşturulma zamanı vs yok ama ters sırayla veya isme göre.
-            // Önce bekleyenler, sonra onaylılar şeklinde de olabilir ama sadece bekleyenler yönetimi daha kolay.
-            // Requirement says: "Bekleyen kelimeleri listeleyebilsin."
+            // Bekleyen kelimeleri listele
             var words = await _context.Words
                                 .Include(w => w.CreatedByUser)
                                 .OrderBy(w => w.Status) // Pending (0) first
                                 .ThenByDescending(w => w.Id)
                                 .ToListAsync();
-            return View(words);
+
+            // Test sonuçlarını listele (Leaderboard: En yüksek başarı oranı en üstte)
+            var testResults = await _context.TestResults
+                                .Include(tr => tr.User)
+                                .OrderByDescending(tr => (double)tr.CorrectCount / tr.TotalQuestions)
+                                .ThenByDescending(tr => tr.DateTaken)
+                                .ToListAsync();
+
+            var model = new AdminPanelViewModel
+            {
+                Words = words,
+                TestResults = testResults,
+                TotalTestsTaken = testResults.Count,
+                AverageScore = testResults.Any() ? Math.Round(testResults.Average(tr => (double)tr.CorrectCount / tr.TotalQuestions * 100), 1) : 0,
+                TotalUsersTested = testResults.Select(tr => tr.UserId).Distinct().Count()
+            };
+
+            return View(model);
         }
 
         [HttpPost]

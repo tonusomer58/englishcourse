@@ -63,7 +63,7 @@
                                                 string colorClass = successRate >= 80 ? "success" : successRate >= 50 ? "warning" : "danger";
                                             }
                                             <div class="progress" style="height: 20px;">
-                                                <div class="progress-bar bg-@colorClass" role="progressbar" style="width: @successRate%;" aria-valuenow="@successRate" aria-valuemin="0" aria-valuemax="100">@successRate%</div>
+                                                <div class="progress-bar bg-@colorClass" role="progressbar" style="width: @((int)successRate)%;" aria-valuenow="@successRate" aria-valuemin="0" aria-valuemax="100">@successRate%</div>
                                             </div>
                                         </td>
                                     </tr>

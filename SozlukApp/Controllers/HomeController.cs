@@ -21,12 +21,21 @@ public class HomeController : Controller
         return View();
     }
 
-    public async Task<IActionResult> Dictionary()
+    public async Task<IActionResult> Dictionary(string searchString)
     {
-        var words = await _context.Words
-                            .Where(w => w.Status == SozlukApp.Models.WordStatus.Approved)
+        var wordsQuery = _context.Words
+                            .Where(w => w.Status == SozlukApp.Models.WordStatus.Approved);
+
+        if (!string.IsNullOrEmpty(searchString))
+        {
+            wordsQuery = wordsQuery.Where(w => w.Turkish.Contains(searchString) || w.English.Contains(searchString));
+        }
+
+        var words = await wordsQuery
                             .OrderByDescending(w => w.Id)
                             .ToListAsync();
+        
+        ViewData["CurrentFilter"] = searchString;
         return View(words);
     }
 

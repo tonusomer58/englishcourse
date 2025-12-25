@@ -1,64 +1,182 @@
-@model IEnumerable<SozlukApp.Models.Word>
+@model SozlukApp.Models.AdminPanelViewModel
 
 @{
     ViewData["Title"] = "Admin Paneli";
 }
 
 <div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>Admin Yönetim Paneli</h2>
+    <div class="d-flex justify-content-between align-items-center mb-4 admin-header">
+        <div>
+            <h2>Admin Yönetim Paneli</h2>
+            <p class="text-muted mb-0">Platform yönetimi ve istatistikler</p>
+        </div>
         <a asp-controller="Word" asp-action="Add" class="btn btn-primary">
             <i class="bi bi-plus-lg"></i> Yeni Kelime Ekle
         </a>
     </div>
-    
-    <div class="table-responsive">
-        <table class="table table-hover table-bordered shadow-sm">
-            <thead class="table-dark">
-                <tr>
-                    <th>#</th>
-                    <th>Türkçe</th>
-                    <th>İngilizce</th>
-                    <th>Ekleyen</th>
-                    <th>Durum</th>
-                    <th>Açıklama</th>
-                    <th>İşlemler</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model)
+
+    <style>
+        @@media (max-width: 425px) {
+            .admin-header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            .admin-header .btn {
+                width: 100%;
+            }
+        }
+    </style>
+
+    <!-- İstatistik Kartları -->
+    <div class="row mb-4">
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm border-0 bg-primary bg-opacity-10 h-100">
+                <div class="card-body text-center d-flex flex-column justify-content-center">
+                    <h5 class="card-title text-primary">Toplam Test</h5>
+                    <p class="display-4 fw-bold mb-0">@Model.TotalTestsTaken</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm border-0 bg-success bg-opacity-10 h-100">
+                <div class="card-body text-center d-flex flex-column justify-content-center">
+                    <h5 class="card-title text-success">Ortalama Doğruluk Oranı</h5>
+                    <p class="display-4 fw-bold mb-0">%@Model.AverageScore</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm border-0 bg-info bg-opacity-10 h-100">
+                <div class="card-body text-center d-flex flex-column justify-content-center">
+                    <h5 class="card-title text-info">Test Çözen Kullanıcı</h5>
+                    <p class="display-4 fw-bold mb-0">@Model.TotalUsersTested</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <ul class="nav nav-tabs mb-4" id="adminTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="words-tab" data-bs-toggle="tab" data-bs-target="#words" type="button" role="tab" aria-controls="words" aria-selected="true">
+                <i class="bi bi-translate me-2"></i>Kelime Yönetimi 
+                @if(Model.Words.Any(w => w.Status == SozlukApp.Models.WordStatus.Pending))
                 {
-                    <tr class="@(item.Status == SozlukApp.Models.WordStatus.Pending ? "table-warning" : 
-                                item.Status == SozlukApp.Models.WordStatus.Approved ? "table-success" : "table-danger")">
-                        <td>@item.Id</td>
-                        <td>@item.Turkish</td>
-                        <td>@item.English</td>
-                        <td>@(item.CreatedByUser?.Username ?? "Anonim")</td>
-                        <td>
-                            @if(item.Status == SozlukApp.Models.WordStatus.Pending) { <span class="badge bg-warning text-dark">Bekliyor</span> }
-                            else if(item.Status == SozlukApp.Models.WordStatus.Approved) { <span class="badge bg-success">Onaylı</span> }
-                            else { <span class="badge bg-danger">Reddedildi</span> }
-                        </td>
-                        <td>@item.Description</td>
-                        <td>
-                            <div class="btn-group" role="group">
-                                @if(item.Status == SozlukApp.Models.WordStatus.Pending)
-                                {
-                                    <form asp-action="Approve" asp-route-id="@item.Id" method="post" style="display:inline;">
-                                        <button type="submit" class="btn btn-sm btn-success" title="Onayla">✔️</button>
-                                    </form>
-                                    <form asp-action="Reject" asp-route-id="@item.Id" method="post" style="display:inline;">
-                                        <button type="submit" class="btn btn-sm btn-warning" title="Reddet">❌</button>
-                                    </form>
-                                }
-                                <form asp-action="Delete" asp-route-id="@item.Id" method="post" style="display:inline;" onsubmit="return confirm('Silmek istediğine emin misin?');">
-                                    <button type="submit" class="btn btn-sm btn-danger" title="Sil">🗑️</button>
-                                </form>
-                            </div>
-                        </td>
-                    </tr>
+                    <span class="badge bg-danger ms-2">@Model.Words.Count(w => w.Status == SozlukApp.Models.WordStatus.Pending)</span>
                 }
-            </tbody>
-        </table>
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tests-tab" data-bs-toggle="tab" data-bs-target="#tests" type="button" role="tab" aria-controls="tests" aria-selected="false">
+                <i class="bi bi-clipboard-data me-2"></i>Test Sonuçları
+            </button>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="adminTabsContent">
+        <!-- Kelimeler Tabı -->
+        <div class="tab-pane fade show active" id="words" role="tabpanel" aria-labelledby="words-tab">
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered shadow-sm">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>#</th>
+                            <th>Türkçe</th>
+                            <th>İngilizce</th>
+                            <th>Ekleyen</th>
+                            <th>Durum</th>
+                            <th>Açıklama</th>
+                            <th>İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Words)
+                        {
+                            <tr class="@(item.Status == SozlukApp.Models.WordStatus.Pending ? "table-warning" : 
+                                        item.Status == SozlukApp.Models.WordStatus.Approved ? "table-success" : "table-danger")">
+                                <td>@item.Id</td>
+                                <td>@item.Turkish</td>
+                                <td>@item.English</td>
+                                <td>@(item.CreatedByUser?.Username ?? "Anonim")</td>
+                                <td>
+                                    @if(item.Status == SozlukApp.Models.WordStatus.Pending) { <span class="badge bg-warning text-dark">Bekliyor</span> }
+                                    else if(item.Status == SozlukApp.Models.WordStatus.Approved) { <span class="badge bg-success">Onaylı</span> }
+                                    else { <span class="badge bg-danger">Reddedildi</span> }
+                                </td>
+                                <td>@item.Description</td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        @if(item.Status == SozlukApp.Models.WordStatus.Pending)
+                                        {
+                                            <form asp-action="Approve" asp-route-id="@item.Id" method="post" style="display:inline;">
+                                                <button type="submit" class="btn btn-sm btn-success" title="Onayla">✔️</button>
+                                            </form>
+                                            <form asp-action="Reject" asp-route-id="@item.Id" method="post" style="display:inline;">
+                                                <button type="submit" class="btn btn-sm btn-warning" title="Reddet">❌</button>
+                                            </form>
+                                        }
+                                        <form asp-action="Delete" asp-route-id="@item.Id" method="post" style="display:inline;" onsubmit="return confirm('Silmek istediğine emin misin?');">
+                                            <button type="submit" class="btn btn-sm btn-danger" title="Sil">🗑️</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Test Sonuçları Tabı -->
+        <div class="tab-pane fade" id="tests" role="tabpanel" aria-labelledby="tests-tab">
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered shadow-sm">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Sıra</th>
+                            <th>Tarih</th>
+                            <th>Kullanıcı</th>
+                            <th>Seviye</th>
+                            <th>Doğru Sayısı</th>
+                            <th>Başarı Oranı</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{ int rank = 1; }
+                        @foreach (var test in Model.TestResults)
+                        {
+                            // Başarı hesabı
+                            var percentage = (double)test.CorrectCount / test.TotalQuestions * 100;
+                            var badgeClass = percentage >= 70 ? "success" : percentage >= 40 ? "warning" : "danger";
+
+                            <tr>
+                                <td class="fw-bold">@rank</td>
+                                <td>@test.DateTaken.ToString("dd.MM.yyyy HH:mm")</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-light rounded-circle p-1 me-2" style="width:32px;height:32px;text-align:center;">
+                                            <i class="bi bi-person"></i>
+                                        </div>
+                                        @(test.User?.Username ?? "Silinmiş Kullanıcı")
+                                    </div>
+                                </td>
+                                <td><span class="badge bg-secondary">@test.Level</span></td>
+                                <td>@test.CorrectCount / @test.TotalQuestions</td>
+                                <td>
+                                    <div class="progress" style="height: 20px;">
+                                        <div class="progress-bar bg-@badgeClass" role="progressbar" style="width: @((int)percentage)%" 
+                                             aria-valuenow="@percentage" aria-valuemin="0" aria-valuemax="100">
+                                            %@Math.Round(percentage)
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            rank++;
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
