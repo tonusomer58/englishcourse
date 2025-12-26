@@ -10,11 +10,9 @@
 
 Bu proje, sadece bir web sitesi değil, **Google Cloud Platform (GCP)** üzerinde, **Linux (Ubuntu)** sunucu altyapısında ve **Nginx** teknolojisi kullanılarak canlıya alınmış, ölçeklenebilir modern bir mimaridir.
 
-🌐 **Canlı Demo:** [http://webprogramlama.com.tr](http://webprogramlama.com.tr)
+🌐 **Canlı Demo:** [https://webprogramlama.com.tr](http://webprogramlama.com.tr)
 
-> **⚠️ Önemli Not:** Alan adı (Domain) yönlendirmesi DNS yayılma sürecinde olduğu için, erişimde aksaklık yaşanırsa aşağıdaki doğrudan sunucu IP adresi üzerinden projeyi inceleyebilirsiniz:
->
-> 🔗 **Doğrudan Sunucu Erişimi:** [http://34.170.180.78](http://34.170.180.78)
+🔗 **Doğrudan Sunucu Erişimi:** [https://34.170.180.78](http://34.170.180.78)
 
 ## 🛠️ 2. Kullanılan Teknolojiler ve Altyapı
 
